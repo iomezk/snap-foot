@@ -1,0 +1,77 @@
+name: foot-classic
+version: '1.14.0'
+summary: A fast, lightweight and minimalistic Wayland terminal emulator
+description: |
+  The configuration file path is /home/᚜user᚛/.config/foot/foot.ini
+
+  As of being an unconfined "classic" snap, it doesn't provide sandboxing.
+  Consider your Wayland compositor has control over the terminal emulator.
+
+  Also this snap allows to activate the terminal emulator by opening any character device: `xdg-open /dev/tty`
+source-code: https://github.com/iomezk/snap-foot-classic
+license: MIT
+base: core22
+confinement: classic
+grade: stable
+icon: icon.svg
+
+apps:
+  foot-classic:
+    command: bin/foot
+
+environment:
+  FONTCONFIG_FILE: $SNAP/etc/fonts/fonts.conf
+  LOCPATH: /snap/core22/current/usr/lib/locale
+  GCONV_PATH: /snap/core22/current/usr/$SNAPCRAFT_ARCH_TRIPLET/gconv
+  TERMINFO: $SNAP/share/terminfo
+
+plugs:
+  gnome-42-2204:
+    interface: content
+    default-provider: gnome-42-2204
+    target: $SNAP/gui-lib
+
+parts:
+  local:
+    source: snap/local/
+    source-type: local
+    plugin: dump
+    organize:
+      fonts.conf: etc/fonts/
+    prime:
+    - -patches/
+  foot:
+    after:
+    - local
+    source: https://codeberg.org/dnkl/foot/archive/1.14.0.tar.gz
+    source-checksum: sha256/9a306951bc6bdce150364bccb0fb4b67720f50e98e9ac1de89792c1c1aa30690
+    source-type: tar
+    plugin: meson
+    build-packages:
+    - meson
+    - pkg-config
+    - libpixman-1-dev
+    - wayland-protocols
+    - libwayland-dev
+    - libxkbcommon-dev
+    - libfontconfig1-dev
+    - git  # for latest libtllist-dev
+    - libfcft-dev
+    - libharfbuzz-dev
+    meson-parameters:
+    - --buildtype=release
+    - --strip
+    - --prefix=/
+    # --disable-new-dtags creates RPATH instead of RUNPATH to make shared libraries' dependencies also searched in these paths
+    - -Dc_link_args=-Wl,--disable-new-dtags,-z,nodeflib,--dynamic-linker=/snap/core22/current/lib64/ld-linux-x86-64.so.2,-rpath=/snap/core22/current/lib/x86_64-linux-gnu:/snap/gnome-42-2204/current/usr/lib/x86_64-linux-gnu:/snap/kde-frameworks-5-102-qt-5-15-8-core22/current/usr/lib/x86_64-linux-gnu
+    - -Dthemes=false
+    - -Dime=false
+    - -Dtests=false
+    override-pull: |
+      craftctl default
+      patch -p1 -i ../../local/src/patches/foot-default-theme.patch
+      patch -p1 -i ../../local/src/patches/foot-ignore-args.patch
+      patch -p1 -i ../../local/src/patches/foot-unsetenv.patch
+    prime:
+    - bin/foot
+    - share/terminfo/f/foot

@@ -1,0 +1,18 @@
+--- a/main.c
++++ b/main.c
+@@ -243,10 +243,14 @@
+     config_override_t overrides = tll_init();
+ 
+     while (true) {
+-        int c = getopt_long(argc, argv, "+c:Co:t:T:a:LD:f:w:W:s::HmFPp:d:l::Sveh", longopts, NULL);
++        int c = getopt_long(argc, argv, "+c:Co:t:T:a:LD:f:w:W:s::HmFPp:d:l::Sveh#", longopts, NULL);
+ 
+         if (c == -1)
+             break;
++        if (c == '#') {
++            optind = argc;
++            break;
++        }
+ 
+         switch (c) {
+         case 'c':

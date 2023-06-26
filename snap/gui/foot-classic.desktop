@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Exec=foot-classic -#
+Icon=${SNAP}/meta/gui/icon.svg
+Terminal=false
+Categories=System;TerminalEmulator;
+Keywords=shell;prompt;command;commandline;
+MimeType=inode/chardevice
+
+Name=Foot (snap classic)
+GenericName=Terminal
+Comment=A wayland native terminal emulator
