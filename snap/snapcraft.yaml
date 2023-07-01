@@ -1,29 +1,36 @@
-name: foot-classic
+name: foot-terminal
 version: '1.14.0'
 summary: A fast, lightweight and minimalistic Wayland terminal emulator
 description: |
-  The configuration file path is /home/᚜user᚛/.config/foot/foot.ini
+  This snap allows to activate the terminal emulator by opening any character device: `xdg-open /dev/tty`
 
-  As of being an unconfined "classic" snap, it doesn't provide sandboxing.
-  Consider your Wayland compositor has control over the terminal emulator.
+  ssh can be used to escape the snap. Keys directory is /home/᚜user᚛/snap/foot-terminal/common/.ssh/
 
-  Also this snap allows to activate the terminal emulator by opening any character device: `xdg-open /dev/tty`
-source-code: https://github.com/iomezk/snap-foot-classic
+  For autoconnection put to your /home/᚜user᚛/snap/foot-terminal/common/.config/foot/foot.ini something like this:  
+  shell=ssh -t user@localhost tmux new -A
+source-code: https://github.com/iomezk/snap-foot/tree/core22-confined
 license: MIT
 base: core22
-confinement: classic
+confinement: strict
 grade: stable
 icon: icon.svg
 
 apps:
-  foot-classic:
+  foot-terminal:
+    command-chain:
+    - foot-wrapper
     command: bin/foot
+    plugs:
+    - network
+    - opengl
+    - wayland
 
 environment:
+  HOME: $SNAP_USER_COMMON
+  PATH: $SNAP/bin:$PATH
+  LD_LIBRARY_PATH: $SNAP/gui-lib/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
+  FONTCONFIG_PATH: $SNAP/gui-lib/etc/fonts
   FONTCONFIG_FILE: $SNAP/etc/fonts/fonts.conf
-  LOCPATH: /snap/core22/current/usr/lib/locale
-  GCONV_PATH: /snap/core22/current/usr/$SNAPCRAFT_ARCH_TRIPLET/gconv
-  TERMINFO: $SNAP/share/terminfo
 
 plugs:
   gnome-42-2204:
@@ -31,13 +38,17 @@ plugs:
     default-provider: gnome-42-2204
     target: $SNAP/gui-lib
 
+layout:
+  /usr/share/font1:
+    symlink: $SNAP/gui-lib/usr/share/fonts
+  /usr/share/X11:
+    symlink: $SNAP/gui-lib/usr/share/X11
+
 parts:
   local:
     source: snap/local/
     source-type: local
     plugin: dump
-    organize:
-      fonts.conf: etc/fonts/
     prime:
     - -patches/
   foot:
@@ -62,16 +73,31 @@ parts:
     - --buildtype=release
     - --strip
     - --prefix=/
-    # --disable-new-dtags creates RPATH instead of RUNPATH to make shared libraries' dependencies also searched in these paths
-    - -Dc_link_args=-Wl,--disable-new-dtags,-z,nodeflib,--dynamic-linker=/snap/core22/current/lib64/ld-linux-x86-64.so.2,-rpath=/snap/core22/current/lib/x86_64-linux-gnu:/snap/gnome-42-2204/current/usr/lib/x86_64-linux-gnu:/snap/kde-frameworks-5-102-qt-5-15-8-core22/current/usr/lib/x86_64-linux-gnu
     - -Dthemes=false
     - -Dime=false
     - -Dtests=false
+    - -Dterminfo=disabled
+    - -Ddefault-terminfo=xterm-256color
     override-pull: |
       craftctl default
       patch -p1 -i ../../local/src/patches/foot-default-theme.patch
       patch -p1 -i ../../local/src/patches/foot-ignore-args.patch
-      patch -p1 -i ../../local/src/patches/foot-unsetenv.patch
+      patch -p1 -i ../../local/src/patches/foot-apparmor-flood.patch
     prime:
     - bin/foot
-    - share/terminfo/f/foot
+  ssh:
+    after:
+    - local
+    plugin: nil
+    build-packages:
+    - dpkg-dev
+    override-pull: |
+      echo 'deb-src http://archive.ubuntu.com/ubuntu jammy-updates main' >/etc/apt/sources.list.d/snap-foot-terminal-ssh.list
+      apt update
+      apt source openssh-client
+      cd */
+      patch -p1 -i ../../../local/src/patches/ssh-home-env.patch
+      apt build-dep openssh-client
+      DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -B --no-sign -jauto
+      mkdir "$CRAFT_PART_INSTALL/bin/"
+      cp debian/openssh-client/usr/bin/ssh "$CRAFT_PART_INSTALL/bin/"
