@@ -1,0 +1,20 @@
+--- a/ssh.c
++++ b/ssh.c
+@@ -662,6 +662,7 @@
+ 		logit("No user exists for uid %lu", (u_long)getuid());
+ 		exit(255);
+ 	}
++	pw->pw_dir = getenv("HOME");
+ 	/* Take a copy of the returned structure. */
+ 	pw = pwcopy(pw);
+ 
+--- a/misc.c
++++ b/misc.c
+@@ -1167,6 +1167,7 @@
+ 		error_f("No such uid %ld", (long)uid);
+ 		goto out;
+ 	}
++	pw->pw_dir = getenv("HOME");
+ 
+ 	/* Make sure directory has a trailing '/' */
+ 	slash = (len = strlen(pw->pw_dir)) == 0 || pw->pw_dir[len - 1] != '/';
