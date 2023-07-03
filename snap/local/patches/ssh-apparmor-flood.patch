@@ -1,0 +1,12 @@
+--- a/ssh.c
++++ b/ssh.c
+@@ -566,9 +566,6 @@
+ 			    (final_pass ? SSHCONF_FINAL : 0), want_final_pass);
+ 
+ 		/* Read systemwide configuration file after user config. */
+-		(void)read_config_file(_PATH_HOST_CONFIG_FILE, pw,
+-		    host, host_name, &options,
+-		    final_pass ? SSHCONF_FINAL : 0, want_final_pass);
+ 	}
+ }
+ 
