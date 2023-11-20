@@ -63,8 +63,6 @@ parts:
     prime:
     - -patches/
   foot:
-    after:
-    - local
     source: https://codeberg.org/dnkl/foot/archive/1.14.0.tar.gz
     source-checksum: sha256/9a306951bc6bdce150364bccb0fb4b67720f50e98e9ac1de89792c1c1aa30690
     source-type: tar
@@ -91,22 +89,20 @@ parts:
     - -Ddefault-terminfo=xterm-256color
     override-pull: |
       craftctl default
-      patch -p1 -i ../../local/src/patches/foot-default-theme.patch
-      patch -p1 -i ../../local/src/patches/foot-ignore-args.patch
-      patch -p1 -i ../../local/src/patches/foot-apparmor-flood.patch
+      patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-default-theme.patch"
+      patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-ignore-args.patch"
+      patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-apparmor-flood.patch"
     prime:
     - bin/foot
   ssh:
-    after:
-    - local
     plugin: nil
     build-packages:
     - dpkg-dev
     override-pull: |
       apt source openssh-client
       cd */
-      patch -p1 -i ../../../local/src/patches/ssh-home-env.patch
-      patch -p1 -i ../../../local/src/patches/ssh-apparmor-flood.patch
+      patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/ssh-home-env.patch"
+      patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/ssh-apparmor-flood.patch"
       apt build-dep -y openssh-client
       DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -B --no-sign -jauto
       mkdir "$CRAFT_PART_INSTALL/bin/"
