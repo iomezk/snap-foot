@@ -98,7 +98,7 @@ parts:
       cd */
       patch -p1 -i ../../../local/src/patches/ssh-home-env.patch
       patch -p1 -i ../../../local/src/patches/ssh-apparmor-flood.patch
-      apt build-dep openssh-client
+      apt build-dep -y openssh-client
       DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -B --no-sign -jauto
       mkdir "$CRAFT_PART_INSTALL/bin/"
       cp debian/openssh-client/usr/bin/ssh "$CRAFT_PART_INSTALL/bin/"
