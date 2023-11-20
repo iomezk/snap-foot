@@ -1,5 +1,4 @@
 name: foot-terminal
-version: '1.14.0'
 summary: A fast, lightweight and minimalistic Wayland terminal emulator
 description: |
   ssh can be used to escape from the snap's confined environment. ssh keys directory is /home/$USER/snap/foot-terminal/common/.ssh/
@@ -55,6 +54,7 @@ package-repositories:
   key-id: F6ECB3762474EDA9D21B7022871920D1991BC93C
   url: http://archive.ubuntu.com/ubuntu
 
+adopt-info: foot
 parts:
   local:
     source: snap/local/
@@ -92,6 +92,9 @@ parts:
       patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-default-theme.patch"
       patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-ignore-args.patch"
       patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-apparmor-flood.patch"
+    override-build: |
+      craftctl default
+      craftctl set "version=$(jq -r .version meson-info/intro-projectinfo.json)"
     prime:
     - bin/foot
   ssh:
