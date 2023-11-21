@@ -16,8 +16,6 @@ icon: icon.svg
 
 apps:
   foot-terminal:
-    command-chain:
-    - foot-wrapper
     command: bin/foot
     plugs:
     - network
@@ -88,6 +86,7 @@ parts:
     - -Ddefault-terminfo=xterm-256color
     override-pull: |
       craftctl default
+      patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-fixed-runtime-dir.patch"
       patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-default-theme.patch"
       patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-ignore-args.patch"
       patch -p1 -i "$CRAFT_PROJECT_DIR/snap/local/patches/foot-apparmor-flood.patch"

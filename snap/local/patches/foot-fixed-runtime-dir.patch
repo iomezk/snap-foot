@@ -1,0 +1,15 @@
+--- a/wayland.c
++++ b/wayland.c
+@@ -1451,6 +1451,12 @@
+         goto out;
+     }
+ 
++    uid_t uid = getuid();
++    if (uid >= 0 && uid < 100000) {
++        char runtime_dir[16];
++	snprintf(runtime_dir, sizeof(runtime_dir), "/run/user/%d", uid);
++	setenv("XDG_RUNTIME_DIR", runtime_dir, 1);
++    }
+     wayl->display = wl_display_connect(NULL);
+     if (wayl->display == NULL) {
+         LOG_ERR("failed to connect to wayland; no compositor running?");
