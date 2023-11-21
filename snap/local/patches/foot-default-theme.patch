@@ -4,8 +4,8 @@
  #include "xmalloc.h"
  #include "xsnprintf.h"
  
--static const uint32_t default_foreground = 0x839496;
--static const uint32_t default_background = 0x002b36;
+-static const uint32_t default_foreground = 0xffffff;
+-static const uint32_t default_background = 0x242424;
 +static const uint32_t default_foreground = 0xdcdccc;
 +static const uint32_t default_background = 0x111111;
  
@@ -15,14 +15,14 @@
  
  static const uint32_t default_color_table[256] = {
      // Regular
--    0x073642,
--    0xdc322f,
--    0x859900,
--    0xb58900,
--    0x268bd2,
--    0xd33682,
--    0x2aa198,
--    0xeee8d5,
+-    0x242424,
+-    0xf62b5a,
+-    0x47b413,
+-    0xe3c401,
+-    0x24acd4,
+-    0xf2affd,
+-    0x13c299,
+-    0xe6e6e6,
 +    0x222222,
 +    0xcc9393,
 +    0x7f9f7f,
@@ -33,13 +33,13 @@
 +    0xdcdccc,
  
      // Bright
--    0x08404f,
--    0xe35f5c,
--    0x9fb700,
--    0xd9a400,
--    0x4ba1de,
--    0xdc619d,
--    0x32c1b6,
+-    0x616161,
+-    0xff4d51,
+-    0x35d450,
+-    0xe9e836,
+-    0x5dc5f8,
+-    0xfeabf2,
+-    0x24dfc4,
 +    0x666666,
 +    0xdca3a3,
 +    0xbfebbf,
@@ -50,3 +50,12 @@
      0xffffff,
  
      // 6x6x6 RGB cube
+@@ -2994,7 +2994,7 @@
+         .use_custom_underline_offset = false,
+         .box_drawings_uses_font_glyphs = false,
+         .underline_thickness = {.pt = 0., .px = -1},
+-        .dpi_aware = false,
++        .dpi_aware = true,
+         .bell = {
+             .urgent = false,
+             .notify = false,

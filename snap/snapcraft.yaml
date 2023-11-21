@@ -63,25 +63,24 @@ parts:
     prime:
     - -patches/
   foot:
-    source: https://codeberg.org/dnkl/foot/archive/1.14.0.tar.gz
-    source-checksum: sha256/9a306951bc6bdce150364bccb0fb4b67720f50e98e9ac1de89792c1c1aa30690
+    source: https://codeberg.org/dnkl/foot/archive/1.16.2.tar.gz
+    source-checksum: sha256/0e02af376e5f4a96eeb90470b7ad2e79a1d660db2a7d1aa772be43c7db00e475
     source-type: tar
     plugin: meson
+    build-snaps:
+    - gnome-42-2204-sdk
     build-packages:
-    - meson
-    - pkg-config
-    - libpixman-1-dev
-    - wayland-protocols
-    - libwayland-dev
-    - libxkbcommon-dev
-    - libfontconfig1-dev
     - git  # for latest libtllist-dev
-    - libfcft-dev
-    - libharfbuzz-dev
+    - jq
+    build-environment:
+    - PATH: /snap/gnome-42-2204-sdk/current/usr/bin${PATH:+:$PATH}
+    - LD_LIBRARY_PATH: /snap/gnome-42-2204-sdk/current/lib/$CRAFT_ARCH_TRIPLET:/snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET:/snap/gnome-42-2204-sdk/current/usr/lib:/snap/gnome-42-2204-sdk/current/usr/lib/vala-current:/snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET/pulseaudio${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    - PKG_CONFIG_PATH: /snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/lib/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
     meson-parameters:
     - --buildtype=release
     - --strip
     - --prefix=/
+    - -Dc_args=-Wno-pedantic  # error: ISO C does not support the ‘_Float*’ type [-Werror=pedantic]
     - -Dthemes=false
     - -Dime=false
     - -Dtests=false
