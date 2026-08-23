@@ -51,11 +51,11 @@
  
      // 6x6x6 RGB cube
 @@ -2994,7 +2994,7 @@
-         .use_custom_underline_offset = false,
          .box_drawings_uses_font_glyphs = false,
          .underline_thickness = {.pt = 0., .px = -1},
+         .strikeout_thickness = {.pt = 0., .px = -1},
 -        .dpi_aware = false,
 +        .dpi_aware = true,
-         .bell = {
-             .urgent = false,
-             .notify = false,
+         .gamma_correct = false,
+         .uppercase_regex_insert = true,
+         .security = {

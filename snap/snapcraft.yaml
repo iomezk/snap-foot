@@ -1,4 +1,5 @@
 name: foot-terminal
+title: foot-terminal
 summary: A fast, lightweight and minimalistic Wayland terminal emulator
 description: |
   ssh can be used to escape from the snap's confined environment. ssh keys directory is /home/$USER/snap/foot-terminal/common/.ssh/
@@ -7,9 +8,12 @@ description: |
   shell=ssh -t -o SendEnv=WAYLAND_DISPLAY user@localhost tmux -u new -A
 
   Also this snap allows to activate the terminal emulator by opening any character device: xdg-open /dev/random
-source-code: https://github.com/iomezk/snap-foot/tree/core22-confined
+source-code: https://github.com/iomezk/snap-foot/tree/core24
+contact: https://github.com/iomezk/snap-foot/issues
+issues: https://github.com/iomezk/snap-foot/issues
+website: https://github.com/iomezk/snap-foot
 license: MIT
-base: core22
+base: core24
 confinement: strict
 grade: stable
 icon: icon.svg
@@ -26,15 +30,19 @@ apps:
 environment:
   HOME: $SNAP_USER_COMMON
   PATH: $SNAP/bin:$PATH
-  LD_LIBRARY_PATH: $SNAP/gui-lib/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
+  LD_LIBRARY_PATH: $SNAP/mesa/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/gui-lib/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR
   FONTCONFIG_PATH: $SNAP/gui-lib/etc/fonts
   FONTCONFIG_FILE: $SNAP/etc/fonts/fonts.conf
 
 plugs:
   gnome-42-2204:
     interface: content
-    default-provider: gnome-42-2204
+    default-provider: gnome-46-2404
     target: $SNAP/gui-lib
+  gpu-2404:
+    interface: content
+    default-provider: mesa-2404
+    target: $SNAP/mesa
 
 layout:
   /usr/share/font1:
@@ -49,7 +57,7 @@ package-repositories:
   components:
   - main
   suites:
-  - jammy-updates
+  - noble-updates
   key-id: F6ECB3762474EDA9D21B7022871920D1991BC93C
   url: http://archive.ubuntu.com/ubuntu
 
@@ -62,19 +70,20 @@ parts:
     prime:
     - -patches/
   foot:
-    source: https://codeberg.org/dnkl/foot/archive/1.16.2.tar.gz
-    source-checksum: sha256/0e02af376e5f4a96eeb90470b7ad2e79a1d660db2a7d1aa772be43c7db00e475
+    source: https://codeberg.org/dnkl/foot/archive/1.27.0.tar.gz
+    source-checksum: sha256/f5917cad2d7b723b99873e53d78fd10ea202923d189aed5086591fc53b70b7e3
     source-type: tar
     plugin: meson
     build-snaps:
-    - gnome-42-2204-sdk
+    - gnome-46-2404-sdk
     build-packages:
-    - git  # for latest libtllist-dev
+    - meson
+    - git  # for latest libfcft-dev
     - jq
+    - libtllist-dev
     build-environment:
-    - PATH: /snap/gnome-42-2204-sdk/current/usr/bin${PATH:+:$PATH}
-    - LD_LIBRARY_PATH: /snap/gnome-42-2204-sdk/current/lib/$CRAFT_ARCH_TRIPLET:/snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET:/snap/gnome-42-2204-sdk/current/usr/lib:/snap/gnome-42-2204-sdk/current/usr/lib/vala-current:/snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET/pulseaudio${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-    - PKG_CONFIG_PATH: /snap/gnome-42-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/lib/pkgconfig:/snap/gnome-42-2204-sdk/current/usr/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
+    - LD_LIBRARY_PATH: /snap/gnome-46-2404-sdk/current/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:/snap/gnome-46-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:/snap/gnome-46-2404-sdk/current/usr/lib:/snap/gnome-46-2404-sdk/current/usr/lib/vala-current:/snap/gnome-46-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pulseaudio${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    - PKG_CONFIG_PATH: /snap/gnome-46-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig:/snap/gnome-46-2404-sdk/current/usr/lib/pkgconfig:/snap/gnome-46-2404-sdk/current/usr/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
     meson-parameters:
     - --buildtype=release
     - --strip

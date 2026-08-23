@@ -6,6 +6,6 @@
  
 -        if (is_valid_shell(shell_argv[0]))
 +        if (true || is_valid_shell(shell_argv[0]))
-             setenv("SHELL", shell_argv[0], 1);
+             add_to_env(&custom_env, "SHELL", shell_argv[0]);
  
          slave_exec(ptmx, shell_argv, envp != NULL ? envp : environ,
